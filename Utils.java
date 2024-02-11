@@ -49,6 +49,20 @@ public class Utils {
         return totalIncome;
     }
 
+    public static float calculateTotalExpense(List<Map<String,String>> transactions) {
+        float totalExpense = 0;
+
+        for (Map<String,String> transaction : transactions) {
+            if(transaction.get("TYPE").equals("EXPENSE")) totalExpense += Float.parseFloat(transaction.get("AMOUNT"));
+        }
+
+        return totalExpense;
+    }
+
+    public static float calculateNetSavings(List<Map<String,String>> transactions) {
+        return calculateTotalIncome(transactions) - calculateTotalExpense(transactions);
+    }
+
     public static String readFromFile(String filename){
         StringBuilder fileContent = new StringBuilder();
         try {
@@ -69,7 +83,7 @@ public class Utils {
 
     public static void main(String[] args) {
         List<Map<String,String>> transactions = allTransactionsParser(readFromFile("Transactions.txt"));
-        System.out.println(calculateTotalIncome(transactions));
+        System.out.println(calculateNetSavings(transactions));
     }
 
 }
