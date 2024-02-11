@@ -1,6 +1,8 @@
 import java.io.File;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -27,7 +29,15 @@ public class Utils {
         return transactionMap;
     }
 
-
+    public static List<Map<String, String>> allTransactionsParser(String transactionsString) {
+        List<Map<String,String>> transactions = new ArrayList<Map<String,String>>();
+        for(int i = 0; i < transactionsString.length(); i++) {
+            int indexOfDelimiter = transactionsString.indexOf(";", i);
+            transactions.add(transactionParser(transactionsString.substring(i, indexOfDelimiter)));
+            i = indexOfDelimiter;
+        }
+        return transactions;
+    }
 
     public static String readFromFile(String filename){
         StringBuilder fileContent = new StringBuilder();
@@ -48,7 +58,7 @@ public class Utils {
     }
 
     public static void main(String[] args) {
-        System.out.println(readFromFile("Transactions.txt"));
+        System.out.println(allTransactionsParser(readFromFile("Transactions.txt")));
     }
 
 }
