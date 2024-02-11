@@ -1,3 +1,3 @@
-date,type,category,amount
-date1,type1,category1,amount1
-date2,type2,category2,amount2
+date,INCOME,category,1
+date1,EXPENSE,category1,2.5
+date2,INCOME,category2,3.8599
