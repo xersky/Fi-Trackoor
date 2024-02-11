@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileReader;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -65,8 +66,9 @@ public class Utils {
         return calculateTotalIncome(transactions) - calculateTotalExpense(transactions);
     }
 
-    public static void generateReport(List<Map<String,String>> transactions) {
+    public static String generateReport(List<Map<String,String>> transactions) {
         Set<String> categories = new HashSet<>();
+        Map<String,Float> expensesByCategory = new HashMap<>();
         StringBuffer reportBuffer = new StringBuffer();
 
         float totalIncome = calculateTotalIncome(transactions);
@@ -74,7 +76,6 @@ public class Utils {
         float netSavings = totalIncome - totalExpense;
 
         reportBuffer.append("----------------------- Financial Activity -----------------------");
-
 
         for (Map<String,String> transaction : transactions) {
             reportBuffer.append("\n");
@@ -84,8 +85,6 @@ public class Utils {
             categories.add(transaction.get(Transaction.CATEGORY.name()));
         }
 
-        Map<String,Float> expensesByCategory = new HashMap<>();
-        
         for (String category : categories) {
             float expenses = 0;
             for (Map<String,String> transaction : transactions) {
@@ -95,21 +94,14 @@ public class Utils {
         }
 
         reportBuffer.append("\n---------------------- Expenses By Category ----------------------");
-
         expensesByCategory.forEach((k,v) -> reportBuffer.append("\n<" + k + "> Total Expenses: " + v));
-
         reportBuffer.append("\n---------------------------- Summary -----------------------------");
-
-
         reportBuffer.append("\nTotal Income: " + totalIncome);
         reportBuffer.append("\nTotal Expenses: " + totalExpense);
         reportBuffer.append("\nNet Savings: " + netSavings);
-
         reportBuffer.append("\n-----------------------------------------------------------------");
 
-
-        System.out.println(reportBuffer.toString());
-        
+        return reportBuffer.toString();
     }
 
     public static String readFromFile(String filename){
@@ -130,9 +122,24 @@ public class Utils {
         return fileContent.toString();
     }
 
+    public static void updateFile(String filename, String newFileContent) {
+        try {
+            File file = new File(filename);
+
+            if(!file.exists()) file.createNewFile();
+
+            PrintWriter out = new PrintWriter(file);
+            out.println(newFileContent);
+            out.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         List<Map<String,String>> transactions = allTransactionsParser(readFromFile("Transactions.txt"));
-        generateReport(transactions);
+        updateFile("Report.txt", generateReport(transactions));
     }
 
 }

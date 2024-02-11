@@ -1,0 +1,12 @@
+----------------------- Financial Activity -----------------------
+DATE: date | TYPE: EXPENSE | CATEGORY: category | AMOUNT: 1 | 
+DATE: date1 | TYPE: EXPENSE | CATEGORY: category | AMOUNT: 2 | 
+DATE: date2 | TYPE: EXPENSE | CATEGORY: FRUIT | AMOUNT: 3 | 
+---------------------- Expenses By Category ----------------------
+<FRUIT> Total Expenses: 3.0
+<category> Total Expenses: 3.0
+---------------------------- Summary -----------------------------
+Total Income: 0.0
+Total Expenses: 6.0
+Net Savings: -6.0
+-----------------------------------------------------------------
