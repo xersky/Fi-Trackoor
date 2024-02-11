@@ -2,9 +2,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 
 public class Utils {
 
@@ -43,7 +45,7 @@ public class Utils {
         float totalIncome = 0;
 
         for (Map<String,String> transaction : transactions) {
-            if(transaction.get("TYPE").equals("INCOME")) totalIncome += Float.parseFloat(transaction.get("AMOUNT"));
+            if(transaction.get(Transaction.TYPE.name()).equals("INCOME")) totalIncome += Float.parseFloat(transaction.get(Transaction.AMOUNT.name()));
         }
 
         return totalIncome;
@@ -53,7 +55,7 @@ public class Utils {
         float totalExpense = 0;
 
         for (Map<String,String> transaction : transactions) {
-            if(transaction.get("TYPE").equals("EXPENSE")) totalExpense += Float.parseFloat(transaction.get("AMOUNT"));
+            if(transaction.get(Transaction.TYPE.name()).equals("EXPENSE")) totalExpense += Float.parseFloat(transaction.get(Transaction.AMOUNT.name()));
         }
 
         return totalExpense;
@@ -61,6 +63,53 @@ public class Utils {
 
     public static float calculateNetSavings(List<Map<String,String>> transactions) {
         return calculateTotalIncome(transactions) - calculateTotalExpense(transactions);
+    }
+
+    public static void generateReport(List<Map<String,String>> transactions) {
+        Set<String> categories = new HashSet<>();
+        StringBuffer reportBuffer = new StringBuffer();
+
+        float totalIncome = calculateTotalIncome(transactions);
+        float totalExpense = calculateTotalExpense(transactions);
+        float netSavings = totalIncome - totalExpense;
+
+        reportBuffer.append("----------------------- Financial Activity -----------------------");
+
+
+        for (Map<String,String> transaction : transactions) {
+            reportBuffer.append("\n");
+            for (int i = 0; i < 4; i++) {
+                reportBuffer.append(Transaction.fromInt(i).name() + ": " + transaction.get(Transaction.fromInt(i).name()) + " | ");
+            }
+            categories.add(transaction.get(Transaction.CATEGORY.name()));
+        }
+
+        Map<String,Float> expensesByCategory = new HashMap<>();
+        
+        for (String category : categories) {
+            float expenses = 0;
+            for (Map<String,String> transaction : transactions) {
+                if(transaction.get(Transaction.CATEGORY.name()).equals(category) && transaction.get(Transaction.TYPE.name()).equals("EXPENSE")) expenses += Float.parseFloat(transaction.get(Transaction.AMOUNT.name()));
+            }
+            expensesByCategory.put(category, expenses);
+        }
+
+        reportBuffer.append("\n---------------------- Expenses By Category ----------------------");
+
+        expensesByCategory.forEach((k,v) -> reportBuffer.append("\n<" + k + "> Total Expenses: " + v));
+
+        reportBuffer.append("\n---------------------------- Summary -----------------------------");
+
+
+        reportBuffer.append("\nTotal Income: " + totalIncome);
+        reportBuffer.append("\nTotal Expenses: " + totalExpense);
+        reportBuffer.append("\nNet Savings: " + netSavings);
+
+        reportBuffer.append("\n-----------------------------------------------------------------");
+
+
+        System.out.println(reportBuffer.toString());
+        
     }
 
     public static String readFromFile(String filename){
@@ -83,7 +132,7 @@ public class Utils {
 
     public static void main(String[] args) {
         List<Map<String,String>> transactions = allTransactionsParser(readFromFile("Transactions.txt"));
-        System.out.println(calculateNetSavings(transactions));
+        generateReport(transactions);
     }
 
 }
